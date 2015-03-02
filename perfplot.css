@@ -1,0 +1,39 @@
+.trend {
+	fill: none;
+	stroke-width: 1.5px;
+}
+.naive.trend, .naive.legend {
+	stroke: red;
+}
+.blocked.trend, .blocked.legend {
+	stroke: green;
+}
+.blis.trend, .blis.legend {
+	stroke: blue;
+}
+.latency.trend, .latency.legend {
+	stroke: orange;
+}
+.naive.legend {
+	fill: red;
+}
+.blocked.legend {
+	fill: green;
+}
+.blis.legend {
+	fill: blue;
+}
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+.label {
+	font-size: larger;
+	font-weight: bold;
+}
+.title {
+	font-size: x-large;
+	font-weight: bold;
+}

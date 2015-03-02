@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>LAFF DEMO: DGEMM Performance (Portable Native Client)</title>
+		<style>
+			body {
+				font-family: Verdana, Geneva, sans-serif;
+				margin: 0;
+				padding: 0;
+			}
+			#showcase {
+				margin: auto;
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				width: 50%;
+				height: 50%;
+				min-width: 1024px;
+				min-height: 768px;
+			}
+		</style>
+		<link href="perfplot.css" rel="stylesheet" type="text/css" />
+		<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+		<script src="perfplot.js"></script>
+		<script>
+			var plot = null;
+			var experiments = [];
+			function onLoad() {
+				var pnaclBench = document.getElementById("pnacl-bench");
+				pnaclBench.addEventListener("message", function(e) {
+					var message = e.data;
+					plot.add(message.benchmark, parseFloat(message.size), parseFloat(message.FLOPS) * 1.0e-9);
+					if (experiments.length > 0) {
+						pnaclBench.postMessage(experiments.shift());
+					}
+				}, true);
+				for (var i = 10; i < 1025; i *= Math.sqrt(Math.sqrt(10.0))) {
+					experiments.push({
+						"benchmark": "Naive",
+						"size": Math.round(i)
+					});
+					experiments.push({
+						"benchmark": "Blocked",
+						"size": Math.round(i)
+					});
+					experiments.push({
+						"benchmark": "BLIS",
+						"size": Math.round(i)
+					});
+				}
+				pnaclBench.postMessage(experiments.shift());
+			}
+		</script>
+	</head>
+	<body onload="onLoad();">
+		<object id="pnacl-bench" type="application/x-pnacl" width="0" height="0" data="demo.nmf">
+			<h1>Your browser does not support Portable Native Client technology</h1>
+		</object>
+		<div id="showcase"></div>
+		<script>
+			plot = new PerfPlot("#showcase", "DGEMM Performance (Portable Native Client)", true);
+		</script>
+	</body>
+</html>
