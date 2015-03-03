@@ -15,7 +15,7 @@ function PerfPlot(root, title, is_dgemm) {
 	} else {
 		this.scaleX
 			.base(2)
-			.domain([16, 1024*1024*16])
+			.domain([64, 1024*1024*64])
 			.range([0, this.width]);
 	}
 
@@ -35,11 +35,12 @@ function PerfPlot(root, title, is_dgemm) {
 		.attr('height', this.height)
 
 	var tickMap = new Array();
-	tickMap[16] = "16";
-	tickMap[16*32] = "512";
-	tickMap[16*1024] = "16K";
-	tickMap[16*32*1024] = "512K";
-	tickMap[16*1024*1024] = "16M";
+	tickMap[64] = "64";
+	tickMap[1024] = "1K";
+	tickMap[16384] = "16K";
+	tickMap[256*1024] = "256K";
+	tickMap[4*1024*1024] = "4M";
+	tickMap[64*1024*1024] = "64M";
 	this.axisX = d3.svg.axis()
 		.scale(this.scaleX)
 		.orient('bottom');
@@ -47,8 +48,8 @@ function PerfPlot(root, title, is_dgemm) {
 		this.axisX.tickFormat(this.scaleX.tickFormat(10, ".f"));
 	} else {
 		this.axisX
-			.tickValues([16, 16*32, 16*1024, 16*32*1024, 16*1024*1024])
-			.tickFormat(function(d) { console.log(d); return tickMap[d]; });
+			.tickValues([64, 1024, 16384, 256*1024, 4*1024*1024, 64*1024*1024])
+			.tickFormat(function(d) { return tickMap[d]; });
 	}
 
 	this.axisY = d3.svg.axis()
@@ -64,7 +65,7 @@ function PerfPlot(root, title, is_dgemm) {
 			.attr("x", this.width / 2)
 			.attr("y", margin.bottom * 0.60)
 			.style("text-anchor", "middle")
-			.text(is_dgemm ? "Problem size (n = m = k)" : "Array size (32-bit words)");
+			.text(is_dgemm ? "Problem size (n = m = k)" : "Array size (bytes)");
 
 	this.main.append('g')
 		.attr('transform', 'translate(0,0)')
