@@ -1,0 +1,10 @@
+# Ninja-generated files
+.ninja_deps
+.ninja_log
+build.ninja
+
+# Build files
+*.bc
+artifacts/demo.js
+artifacts/demo.js.mem
+artifacts/demo.pexe
