@@ -3,8 +3,8 @@ function PerfPlot(root, title, is_dgemm) {
 	this.performanceTop = is_dgemm ? 5 : 50;
 
 	var margin = {top: 75, right: 25, bottom: 75, left: 75};
-	this.width = 800 - margin.left - margin.right;
-	this.height = 600 - margin.top - margin.bottom;
+	this.width = 1024 - margin.left - margin.right;
+	this.height = 768 - margin.top - margin.bottom;
 
 	this.scaleX = d3.scale.log();
 	if (is_dgemm) {
@@ -108,8 +108,32 @@ function PerfPlot(root, title, is_dgemm) {
 			.attr("class", "latency trend");
 	}
 
-	;
 	if (is_dgemm) {
+		var explainationMap = {
+			"Naive": "Naive implementation of matrix-matrix multiplication performs well when matrices are small. However, performance on big matrices is not as good: big matrices do not fit into cache and processor needs to access slow memory during computations.",
+			"Blocked": "Blocked implementation of matrix-matrix multiplication performs operations on blocks of elements instead of individual elements. Multiplication of two blocks is essentially a naive matrix-matrix multiplication and blocks are small enough to fit into cache. That is why blocked matrix-matrix multiplication outperforms naive implementation on large matrix sizes.",
+			"BLIS": "Blocking is an important, but not the only possible optimization in matrix-matrix implementation. High-performance linear algebra libraries, such as BLIS, utilize additional optimizations, which let them improve upon blocked implementation."
+		};
+
+		this.main.append("text")
+			.attr("x", 150)
+			.attr("y", 50)
+			.attr("class", "wrap")
+			.attr("id", "explaination");
+
+		var setExplaination = function(text) {
+			if (!text) {
+				d3.select("#explaination").selectAll("tspan").remove();
+			} else {
+				d3plus.textwrap()
+				.container(d3.select("#explaination"))
+				.shape("square")
+				.width(600)
+				.text(text)
+				.draw();
+    		}
+    	}
+
 		var legend = this.main.selectAll("text.legend").data([
 			{benchmark: "Naive", name: "Naive"},
 			{benchmark: "Blocked", name: "Blocked"},
@@ -120,12 +144,20 @@ function PerfPlot(root, title, is_dgemm) {
 					.attr("y", function(d, i) { return 50 + i * 20; })
 					.attr("class", function(d) { return "legend " + d.benchmark.toLowerCase(); })
 					.text(function(d) { return d.name; })
+					.on("mouseover", function(d) { setExplaination(explainationMap[d.name]); })
+					.on("mouseout", function() { setExplaination(null); })
+					.on("touchstart", function(d) { setExplaination(explainationMap[d.name]); })
+					.on("touchleave", function() { setExplaination(null); });
 		legend.append("rect")
 					.attr("x", function(d, i) { return 15; })
 					.attr("y", function(d, i) { return 40 + i * 20; })
 					.attr("width", 10)
 					.attr("height", 10)
 					.attr("class", function(d) { return "legend " + d.benchmark.toLowerCase(); })
+					.on("mouseover", function(d) { setExplaination(explainationMap[d.name]); })
+					.on("mouseout", function() { setExplaination(null); })
+					.on("touchstart", function(d) { setExplaination(explainationMap[d.name]); })
+					.on("touchleave", function() { setExplaination(null); });
 	}
 }
 
