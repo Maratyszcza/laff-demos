@@ -46,7 +46,7 @@
 						demo.postMessage(experiments.shift());
 					}, false);
 				} else {
-					demo = new Worker("demo.asm.js");
+					demo = new Worker("demo.js");
 				}
 				var onMsg = function(e) {
 					var message = e.data;
